@@ -1,0 +1,587 @@
+{
+  "info": {
+    "name": "Route Snipper",
+    "description": "API tests for the Route Snipper link shortener. Run them in order (Collection Runner).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. POST create (random code)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 201\", () => {",
+              "\tpm.response.to.have.status(201);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/links",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "links"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"https://google.com\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "2. POST create (custom code)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 201\", () => {",
+              "\tpm.response.to.have.status(201);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/links",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "links"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"https://youtube.com\",\n  \"code\": \"test-link\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "3. POST code already taken",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 409\", () => {",
+              "\tpm.response.to.have.status(409);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/links",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "links"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"https://github.com\",\n  \"code\": \"test-link\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "4. POST url without http",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 400\", () => {",
+              "\tpm.response.to.have.status(400);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/links",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "links"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"google.com\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "5. POST invalid url",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 400\", () => {",
+              "\tpm.response.to.have.status(400);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/links",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "links"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"https://\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "6. POST missing url",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 400\", () => {",
+              "\tpm.response.to.have.status(400);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/links",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "links"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "7. POST code too short",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 400\", () => {",
+              "\tpm.response.to.have.status(400);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/links",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "links"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"https://google.com\",\n  \"code\": \"ab\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "8. POST code with invalid chars",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 400\", () => {",
+              "\tpm.response.to.have.status(400);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/links",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "links"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"https://google.com\",\n  \"code\": \"moj link!\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "9. GET all links",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", () => {",
+              "\tpm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/links",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "links"
+          ]
+        }
+      }
+    },
+    {
+      "name": "10. GET search",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", () => {",
+              "\tpm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/links?search=test",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "links"
+          ],
+          "query": [
+            {
+              "key": "search",
+              "value": "test"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "11. GET one link",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", () => {",
+              "\tpm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/links/test-link",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "links",
+            "test-link"
+          ]
+        }
+      }
+    },
+    {
+      "name": "12. GET link not found",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 404\", () => {",
+              "\tpm.response.to.have.status(404);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/links/nepostoji",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "links",
+            "nepostoji"
+          ]
+        }
+      }
+    },
+    {
+      "name": "13. DELETE link",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", () => {",
+              "\tpm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/links/test-link",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "links",
+            "test-link"
+          ]
+        }
+      }
+    },
+    {
+      "name": "14. DELETE link again",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 404\", () => {",
+              "\tpm.response.to.have.status(404);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/links/test-link",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "links",
+            "test-link"
+          ]
+        }
+      }
+    },
+    {
+      "name": "15. PUT method not allowed",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 405\", () => {",
+              "\tpm.response.to.have.status(405);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/links",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "links"
+          ]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    }
+  ]
+}
