@@ -231,6 +231,91 @@ a {
 	word-break: break-all;
 }
 
+/* ========== Links page ========== */
+.links-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-bottom: 16px;
+}
+
+.badge {
+	padding: 4px 10px;
+	font-size: 0.85rem;
+	font-weight: 600;
+	color: var(--primary);
+	background: rgba(79, 70, 229, 0.1);
+	border-radius: 999px;
+	white-space: nowrap;
+}
+
+.search-input {
+	margin-bottom: 16px;
+}
+
+.status-text {
+	padding: 24px 0;
+	text-align: center;
+	color: var(--muted);
+}
+
+.links-list {
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	margin-top: 16px;
+}
+
+.link-item {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	padding: 16px;
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	transition: border-color 0.2s;
+}
+
+.link-item:hover {
+	border-color: var(--primary);
+}
+
+.link-info {
+	min-width: 0;
+}
+
+.link-code {
+	font-family: var(--font-geist-mono), monospace;
+	font-weight: 600;
+	color: var(--primary);
+}
+
+.link-code:hover {
+	text-decoration: underline;
+}
+
+.link-url {
+	margin-top: 2px;
+	font-size: 0.9rem;
+	color: var(--muted);
+	word-break: break-all;
+}
+
+.link-meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	margin-top: 8px;
+	font-size: 0.85rem;
+	color: var(--muted);
+}
+
+.link-item .btn-danger {
+	align-self: flex-start;
+}
+
 /* ========== Tablet and up ========== */
 @media (min-width: 640px) {
 	.header {
@@ -251,5 +336,15 @@ a {
 		flex-direction: row;
 		align-items: center;
 		justify-content: space-between;
+	}
+
+	.link-item {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.link-item .btn-danger {
+		align-self: center;
 	}
 }
