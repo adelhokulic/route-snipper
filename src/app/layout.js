@@ -1,8 +1,14 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Geist_Mono } from "next/font/google";
+import Navbar from "react-bootstrap/Navbar";
+import NavbarBrand from "react-bootstrap/NavbarBrand";
+import Container from "react-bootstrap/Container";
+import Nav from "react-bootstrap/Nav";
+import NavLink from "react-bootstrap/NavLink";
+import "bootstrap/dist/css/bootstrap.min.css";
 import "./globals.css";
 
-const geistSans = Geist({
-	variable: "--font-geist-sans",
+const inter = Inter({
+	variable: "--font-inter",
 	subsets: ["latin"],
 });
 
@@ -18,19 +24,30 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
 	return (
-		<html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+		<html lang="en" className={`${inter.variable} ${geistMono.variable}`}>
 			<body>
-				<header className="header">
-					<a href="/" className="logo">
-						✂️ Route Snipper
-					</a>
-					<nav className="nav">
-						<a href="/">Shorten</a>
-						<a href="/links">All links</a>
-					</nav>
-				</header>
+				<Navbar sticky="top" className="app-navbar py-3">
+					<Container className="gap-3">
+						<NavbarBrand href="/">
+							Route Snipper<span className="brand-dot">.</span>
+						</NavbarBrand>
+						<Nav className="ms-auto gap-1">
+							<NavLink href="/">Shorten</NavLink>
+							<NavLink href="/links">All links</NavLink>
+						</Nav>
+					</Container>
+				</Navbar>
 
-				<main className="container">{children}</main>
+				<main className="page-main">
+					<Container>{children}</Container>
+				</main>
+
+				<footer className="app-footer">
+					<Container>
+						Route Snipper<span className="brand-dot">.</span> Built with
+						Next.js and React Bootstrap
+					</Container>
+				</footer>
 			</body>
 		</html>
 	);

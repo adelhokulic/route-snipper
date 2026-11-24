@@ -2,6 +2,12 @@
 
 import { createLink } from "@/services/linkService";
 import { useState } from "react";
+import Form from "react-bootstrap/Form";
+import InputGroup from "react-bootstrap/InputGroup";
+import Button from "react-bootstrap/Button";
+import Alert from "react-bootstrap/Alert";
+import Card from "react-bootstrap/Card";
+import Spinner from "react-bootstrap/Spinner";
 
 export default function Home() {
 	const [url, setUrl] = useState("");
@@ -37,61 +43,94 @@ export default function Home() {
 		setTimeout(() => setIsCopied(false), 2000);
 	};
 	return (
-		<section className="card">
-			<h1 className="title">Shorten a link</h1>
-			<p className="subtitle">
+		<section className="hero text-center">
+			<span className="hero-pill fade-up">
+				<span className="status-dot"></span>
+				Free link shortener
+			</span>
+
+			<h1 className="hero-title fade-up delay-1">
+				Make long links <span className="text-gradient">short</span>
+			</h1>
+			<p className="lead-muted mx-auto fade-up delay-2">
 				Paste a long link and get a short address that is easy to share.
 			</p>
 
-			<form onSubmit={handleSubmit} className="form">
-				<label className="label" htmlFor="url">
+			<Form onSubmit={handleSubmit} className="shorten-form fade-up delay-3">
+				<Form.Label htmlFor="url" visuallyHidden>
 					Long URL
-				</label>
-				<input
-					value={url}
-					onChange={(e) => setUrl(e.target.value)}
-					id="url"
-					type="text"
-					className="input"
-					placeholder="https://example.com/some/very/long/link"
-				/>
+				</Form.Label>
+				<div className="shorten-bar">
+					<Form.Control
+						value={url}
+						onChange={(e) => setUrl(e.target.value)}
+						id="url"
+						type="text"
+						size="lg"
+						placeholder="https://example.com/some/very/long/link"
+					/>
+					<Button
+						disabled={isLoading}
+						type="submit"
+						size="lg"
+						className="shorten-btn"
+					>
+						{isLoading && (
+							<Spinner animation="border" size="sm" className="me-2" />
+						)}
+						{isLoading ? "Shortening..." : "Shorten"}
+					</Button>
+				</div>
 
-				<label className="label" htmlFor="code">
-					Custom code <span className="optional">(optional)</span>
-				</label>
-				<input
-					value={code}
-					onChange={(e) => setCode(e.target.value)}
-					id="code"
-					type="text"
-					className="input"
-					placeholder="my-link"
-				/>
-				<p className="hint">3-20 characters: letters, numbers and hyphens</p>
-				<button disabled={isLoading} type="submit" className="btn btn-primary">
-					{isLoading ? "Shortening..." : "Shorten"}
-				</button>
-			</form>
+				<div className="code-field">
+					<Form.Label htmlFor="code" className="code-label">
+						Custom code <span className="text-body-secondary">(optional)</span>
+					</Form.Label>
+					<InputGroup>
+						<InputGroup.Text className="code-prefix">
+							{process.env.NEXT_PUBLIC_BASE_URL}/
+						</InputGroup.Text>
+						<Form.Control
+							value={code}
+							onChange={(e) => setCode(e.target.value)}
+							id="code"
+							type="text"
+							placeholder="my-link"
+						/>
+					</InputGroup>
+					<Form.Text>3-20 characters: letters, numbers and hyphens</Form.Text>
+				</div>
+			</Form>
 
-			{errorMessage !== "" && <p className="error">{errorMessage}</p>}
+			{errorMessage !== "" && (
+				<Alert variant="danger" className="app-alert pop-in">
+					{errorMessage}
+				</Alert>
+			)}
 
 			{shortLink && (
-				<div className="result">
-					<p className="result-label">Your short link:</p>
-					<div className="result-row">
-						<a href={shortLink} target="_blank" className="short-link">
-							{shortLink}
-						</a>
-						<button
-							onClick={() => handleCopy()}
-							type="button"
-							className="btn btn-secondary"
-						>
-							{isCopied ? "Copied ✓" : "Copy"}
-						</button>
-					</div>
-					<p className="original-url">{newLink.url}</p>
-				</div>
+				<Card className="result-card pop-in">
+					<Card.Body>
+						<p className="result-label">
+							<span className="result-check">✓</span>
+							Your short link is ready
+						</p>
+						<div className="result-row">
+							<a href={shortLink} target="_blank" className="short-link">
+								{shortLink}
+							</a>
+							<Button
+								onClick={() => handleCopy()}
+								type="button"
+								variant={isCopied ? "success" : "outline-secondary"}
+								className="copy-btn"
+							>
+								{isCopied ? "Copied ✓" : "Copy"}
+							</Button>
+						</div>
+						<p className="original-url text-truncate">{newLink.url}</p>
+					</Card.Body>
+				</Card>
 			)}
 		</section>
 	);

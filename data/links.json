@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "code": "gymrat",
+    "url": "https://gymrat-seven.vercel.app",
+    "clicks": 0,
+    "createdAt": "2026-11-24T18:32:31.158Z"
+  },
+  {
+    "code": "recipehub",
+    "url": "https://recipe-hub-rho-three.vercel.app/",
+    "clicks": 0,
+    "createdAt": "2026-11-24T18:32:47.371Z"
+  }
+]
