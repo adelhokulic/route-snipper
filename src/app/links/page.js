@@ -12,15 +12,16 @@ const LinksPage = () => {
 	useEffect(() => {
 		const loadData = async () => {
 			try {
-				const links = await getLinks();
+				const links = await getLinks(searchTerm);
 				setLinks(links);
 			} catch (error) {
 				setErrorMessage(error.message);
 			}
 			setIsLoading(false);
 		};
-		loadData();
-	}, []);
+		const timer = setTimeout(() => loadData(), 400);
+		return () => clearTimeout(timer);
+	}, [searchTerm]);
 
 	const handleDelete = async (code) => {
 		try {
