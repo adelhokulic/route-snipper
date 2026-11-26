@@ -5,6 +5,9 @@ const filePath = path.join(process.cwd(), "data", "links.json");
 
 export const readLinks = async () => {
 	const value = await fs.readFile(filePath, "utf-8");
+	if (!value.trim()) {
+		return [];
+	}
 	return JSON.parse(value);
 };
 

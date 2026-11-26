@@ -1,6 +1,7 @@
 import { readLinks, writeLinks } from "@/lib/db";
 
 const CODE_REGEX = /^[a-zA-Z0-9-]{3,20}$/;
+const RESERVED_CODES = ["links", "api"];
 
 const generateCode = () => {
 	let result = "";
@@ -15,30 +16,46 @@ const generateCode = () => {
 
 const Handler = async (req, res) => {
 	if (req.method === "POST") {
-		const url = req.body.url;
-		const code = req.body.code;
+		const url = req.body?.url;
+		const code = req.body?.code;
 
-		if (!url) {
+		if (typeof url !== "string" || !url.trim()) {
 			return res.status(400).json({ message: "URL is required." });
 		}
 
-		if (!url.startsWith("http://") && !url.startsWith("https://")) {
+		const trimmedUrl = url.trim();
+
+		if (!trimmedUrl.startsWith("http://") && !trimmedUrl.startsWith("https://")) {
 			return res
 				.status(400)
 				.json({ message: "URL must start with http:// or https://." });
 		}
 
+		let parsedUrl;
 		try {
-			new URL(url);
+			parsedUrl = new URL(trimmedUrl);
 		} catch (error) {
 			return res.status(400).json({ message: "URL is not valid." });
 		}
 
-		if (code && !CODE_REGEX.test(code)) {
+		const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+		if (baseUrl && parsedUrl.host === new URL(baseUrl).host) {
+			return res
+				.status(400)
+				.json({ message: "You cannot shorten a Route Snipper link." });
+		}
+
+		if (code && (typeof code !== "string" || !CODE_REGEX.test(code))) {
 			return res.status(400).json({
 				message:
 					"Code must be 3-20 characters long (letters, numbers and hyphens only).",
 			});
+		}
+
+		if (code && RESERVED_CODES.includes(code.toLowerCase())) {
+			return res
+				.status(400)
+				.json({ message: "This code is reserved. Please choose another one." });
 		}
 
 		const links = await readLinks();
@@ -52,7 +69,7 @@ const Handler = async (req, res) => {
 		}
 		const newLink = {
 			code: finalCode,
-			url: url,
+			url: trimmedUrl,
 			clicks: 0,
 			createdAt: new Date().toISOString(),
 		};
@@ -62,7 +79,10 @@ const Handler = async (req, res) => {
 	}
 
 	if (req.method === "GET") {
-		const search = req.query.search?.toLowerCase();
+		const search =
+			typeof req.query.search === "string"
+				? req.query.search.toLowerCase()
+				: "";
 		const allLinks = await readLinks();
 
 		if (!search) {

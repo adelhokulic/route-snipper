@@ -37,7 +37,7 @@ The project shows that I can:
 | ↪️ **Redirect** | `/{code}` adds one click and redirects to the original URL |
 | 📊 **Dashboard** | `/links` shows every link with its clicks and creation date |
 | 🔍 **Live search** | Search by URL or code, debounced to 400 ms |
-| 🗑️ **Delete** | Removes the link on the server and from the list right away |
+| 🗑️ **Delete** | Asks for confirmation, then removes the link on the server and from the list right away |
 | ✅ **Validation** | Clear error messages from the API, shown in the UI |
 | 🚫 **Not found** | Unknown codes show a friendly 404 page |
 
@@ -157,11 +157,15 @@ The checks run from the cheapest to the most expensive, so a bad request is reje
 
 | # | Rule | Status |
 | --- | --- | --- |
-| 1 | `url` is required | `400` |
+| 1 | `url` is required and must be a string (spaces around it are trimmed) | `400` |
 | 2 | `url` starts with `http://` or `https://` | `400` |
 | 3 | `url` is a real URL (`new URL()` must not throw) | `400` |
-| 4 | `code`, if sent: 3-20 characters, only letters, numbers and hyphens | `400` |
-| 5 | `code`, if sent: not already used | `409` |
+| 4 | `url` does not point to Route Snipper itself (would cause a redirect loop) | `400` |
+| 5 | `code`, if sent: a string of 3-20 characters, only letters, numbers and hyphens | `400` |
+| 6 | `code`, if sent: not a reserved word (`links`, `api`) that is already used by a page or route | `400` |
+| 7 | `code`, if sent: not already used | `409` |
+
+The server never trusts the shape of the request. Wrong types (`"url": 123`, `"code": true`), an empty body or a repeated query parameter return a `400` or are ignored instead of crashing the server.
 
 ---
 
@@ -188,15 +192,24 @@ await writeLinks(updatedLinks);
 redirect(foundLink.url);
 ```
 
-**One service for every API call.** The service turns API errors into JavaScript errors, so every page handles them the same way with `try/catch` and shows the message from the server.
+**One service for every API call.** One helper reads every response. It turns API errors into JavaScript errors, so every page handles them the same way with `try/catch` and shows the message from the server. If the server sends something that is not JSON, the user gets a readable message instead of a parser error.
 
 ```js
-const data = await response.json();
-if (!response.ok) {
-	throw new Error(data.message);
-}
-return data;
+const readResponse = async (response) => {
+	let data;
+	try {
+		data = await response.json();
+	} catch (error) {
+		throw new Error("Something went wrong. Please try again.");
+	}
+	if (!response.ok) {
+		throw new Error(data.message);
+	}
+	return data;
+};
 ```
+
+The search text is sent with `encodeURIComponent`, so searching for parts of a URL like `watch?v=abc&t=10` works correctly.
 
 **Debounced search.** Every keystroke restarts a 400 ms timer. The cleanup function cancels the old timer, so the API is called only once the user stops typing.
 
@@ -215,7 +228,8 @@ useEffect(() => {
 | --- | --- | --- |
 | `app/page.js` | Client | Form state, loading state, clipboard |
 | `app/links/page.js` | Client | Search input, debounce, delete button |
-| `app/[code]/page.js` | Server | Reads the file directly, updates the clicks and calls `redirect()`. No API call and no JavaScript sent to the browser. |
+| `app/[code]/page.js` | Server | Reads the file directly, updates the clicks and calls `redirect()`, or `notFound()` for an unknown code (real `404` status). No API call and no JavaScript sent to the browser. |
+| `app/not-found.js` | Server | The 404 page |
 | `app/layout.js` | Server | Static navbar and footer |
 
 ---
@@ -253,7 +267,8 @@ route-snipper/
         ├── layout.js              # navbar, footer, fonts
         ├── page.js                # home: shorten form
         ├── links/page.js          # dashboard: list, search, delete
-        └── [code]/page.js         # click counter + redirect
+        ├── [code]/page.js         # click counter + redirect
+        └── not-found.js           # 404 page
 ```
 
 ---
@@ -281,15 +296,18 @@ It needs the `NEXT_PUBLIC_` prefix because it is read in a client component. Wit
 
 ## Testing
 
-The `postman/` folder contains a collection with **15 requests**. Each one checks its own status code:
+The `postman/` folder contains a collection with **19 requests**. Each one checks its own status code:
 
 - creating links with a random code and with a custom code (`201`)
-- every validation error (`400`) and a taken code (`409`)
+- every validation error (`400`): missing or invalid URL, wrong types, bad, reserved or self-pointing codes
+- a taken code (`409`)
 - list, search and get one (`200`), unknown code (`404`)
 - delete and delete again (`200`, then `404`)
 - wrong HTTP method (`405`)
 
-Import it into Postman and click **Run collection**. All 15 tests pass.
+Import it into Postman and click **Run collection**. All 19 tests pass.
+
+Before the collection, I tested the API for edge cases (wrong types, empty body, empty data file, reserved codes, redirect loops, special characters in search) and fixed every crash I found.
 
 ---
 
@@ -303,6 +321,8 @@ Locally, the app runs as one long-running Node.js process, so it can read and wr
 4. **Every deploy resets the data.** `links.json` goes back to what is committed in Git.
 
 In short, there is no permanent, shared disk. To deploy this app, the data has to live in a real database such as Firestore, Postgres or MongoDB. Because all data access goes through `readLinks()` and `writeLinks()`, **only `lib/db.js` would need to change**. The API routes, the service and the UI would stay the same.
+
+**Concurrent requests.** Even locally, a JSON file has one more limit. Every write reads the whole file, changes it and writes it back. If two requests arrive at exactly the same moment, both read the same old data and the second write overwrites the first, so one link is lost. A database solves this, because it handles many writes at the same time safely.
 
 ---
 

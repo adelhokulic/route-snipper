@@ -1,7 +1,7 @@
 "use client";
 
 import { createLink } from "@/services/linkService";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Button from "react-bootstrap/Button";
@@ -16,6 +16,7 @@ export default function Home() {
 	const [errorMessage, setErrorMessage] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
 	const [isCopied, setIsCopied] = useState(false);
+	const copyTimer = useRef(null);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -37,10 +38,15 @@ export default function Home() {
 		? `${process.env.NEXT_PUBLIC_BASE_URL}/${newLink.code}`
 		: "";
 
-	const handleCopy = () => {
-		navigator.clipboard.writeText(shortLink);
-		setIsCopied(true);
-		setTimeout(() => setIsCopied(false), 2000);
+	const handleCopy = async () => {
+		try {
+			await navigator.clipboard.writeText(shortLink);
+			setIsCopied(true);
+			clearTimeout(copyTimer.current);
+			copyTimer.current = setTimeout(() => setIsCopied(false), 2000);
+		} catch (error) {
+			setErrorMessage("Could not copy the link. Please copy it manually.");
+		}
 	};
 	return (
 		<section className="hero text-center">

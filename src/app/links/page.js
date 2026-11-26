@@ -32,9 +32,12 @@ const LinksPage = () => {
 	}, [searchTerm]);
 
 	const handleDelete = async (code) => {
+		if (!window.confirm(`Delete the short link /${code}?`)) {
+			return;
+		}
 		try {
 			await deleteLink(code);
-			setLinks(links.filter((link) => link.code !== code));
+			setLinks((prevLinks) => prevLinks.filter((link) => link.code !== code));
 		} catch (error) {
 			setErrorMessage(error.message);
 		}
@@ -49,7 +52,9 @@ const LinksPage = () => {
 						Every short link with its clicks.
 					</p>
 				</div>
-				<span className="count-pill">{links.length} links</span>
+				<span className="count-pill">
+					{links.length} {links.length === 1 ? "link" : "links"}
+				</span>
 			</div>
 
 			<Card className="app-card">

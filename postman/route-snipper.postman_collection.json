@@ -270,7 +270,51 @@
       }
     },
     {
-      "name": "7. POST code too short",
+      "name": "7. POST url is not a string",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 400\", () => {",
+              "\tpm.response.to.have.status(400);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/links",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "links"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": 123\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "8. POST code too short",
       "event": [
         {
           "listen": "test",
@@ -314,7 +358,7 @@
       }
     },
     {
-      "name": "8. POST code with invalid chars",
+      "name": "9. POST code with invalid chars",
       "event": [
         {
           "listen": "test",
@@ -358,7 +402,139 @@
       }
     },
     {
-      "name": "9. GET all links",
+      "name": "10. POST code is not a string",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 400\", () => {",
+              "\tpm.response.to.have.status(400);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/links",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "links"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"https://google.com\",\n  \"code\": 12345\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "11. POST reserved code",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 400\", () => {",
+              "\tpm.response.to.have.status(400);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/links",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "links"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"https://google.com\",\n  \"code\": \"links\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "12. POST link to Route Snipper itself",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 400\", () => {",
+              "\tpm.response.to.have.status(400);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/links",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "links"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"http://localhost:3000/loop\",\n  \"code\": \"loop\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "13. GET all links",
       "event": [
         {
           "listen": "test",
@@ -388,7 +564,7 @@
       }
     },
     {
-      "name": "10. GET search",
+      "name": "14. GET search",
       "event": [
         {
           "listen": "test",
@@ -424,7 +600,7 @@
       }
     },
     {
-      "name": "11. GET one link",
+      "name": "15. GET one link",
       "event": [
         {
           "listen": "test",
@@ -455,7 +631,7 @@
       }
     },
     {
-      "name": "12. GET link not found",
+      "name": "16. GET link not found",
       "event": [
         {
           "listen": "test",
@@ -486,7 +662,7 @@
       }
     },
     {
-      "name": "13. DELETE link",
+      "name": "17. DELETE link",
       "event": [
         {
           "listen": "test",
@@ -517,7 +693,7 @@
       }
     },
     {
-      "name": "14. DELETE link again",
+      "name": "18. DELETE link again",
       "event": [
         {
           "listen": "test",
@@ -548,7 +724,7 @@
       }
     },
     {
-      "name": "15. PUT method not allowed",
+      "name": "19. PUT method not allowed",
       "event": [
         {
           "listen": "test",
